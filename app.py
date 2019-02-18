@@ -4,11 +4,15 @@ import time
 from timeloop import Timeloop
 from datetime import timedelta
 import datetime
+import smtplib, ssl
 
 limit_low = 630.0
 limit_high = 650.0
 limit_low_signalled = False
 limit_high_signalled = False
+port = 465  # For SSL
+email = ''
+password = ''
 
 headers = {
     'Cookie': 'easyid-identity=1LOvBJh2et5Y0B45dshbSljVlIQTmhueI_BwFPi9SkYW8OoBHHM0cqKBs7HkDMJNxAQeUNufhMc64lmXglmTtUTZFBtUbizGX1EvHTBXAQOW2QaKs4KpMvWkUeA8qRXLie5u2mUwihbiXrNP2SqXD87aUCQ3LyHUweleEft0YnVVzjaFHIjyY2_1fNzkZqgqyiFR8sqsER9y_Oyh8MJdYArHE4DE2hvJoHA1poziH0im97X4FTT_4uSEIiDQgasy3tRANdeZGKWLHr0fOUAXu0fQu0gIx7_xH9eSkFgUHyfAaMnS0NKXEuW_zRWhp08Bkf_kslsGg84xbIb2q5wVbWsXnLYIj5E0m4MVmTpUDqR1wPwAZ18lcrkIxaCNfDNhAgse5CWtTfvlqMHkXGJghjuXdS9JuAYoiyH_vX9FWs9RIzKUOaLqWkII5BjoVi8LuSog6BYdOfXp3h9KmMCgAJUSMWfjh2Iyg0tNWj3kVoAffg4nqcOQTKyCpRu5GBscFu9vYEPH1ySIBaTZ8lWhEu1PhMKnOJLel-910D7mHfbWOi1Bj0udn7IvYrxPsp_LhZrcfF6hS9wLHPxTKiQI3Nw; ischmihpps=keb8vhhqnjiiacge57lg1hm4f3',
@@ -70,7 +74,20 @@ def main_job():
 
 def send_email(date_measurement, flow_sum):
   print('send_email')
-  pass
+  # Create a secure SSL context
+  context = ssl.create_default_context()
+
+  with smtplib.SMTP_SSL("smtp.gmail.com", port, context=context) as server:
+    server.login(email, password)
+    sender_email = email
+    receiver_email = email
+    message = """\
+Subject: Hi there
+
+This message is sent from Python."""
+    server.sendmail(sender_email, receiver_email, message)
+  
 
 if __name__ == "__main__":
     tl.start(block=True)
+    print('Program done.')
