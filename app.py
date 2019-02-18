@@ -5,8 +5,10 @@ from timeloop import Timeloop
 from datetime import timedelta
 import datetime
 
+limit_low = 630.0
+limit_high = 650.0
 limit_low_signalled = False
-limit_high_signalled = True
+limit_high_signalled = False
 
 headers = {
     'Cookie': 'easyid-identity=1LOvBJh2et5Y0B45dshbSljVlIQTmhueI_BwFPi9SkYW8OoBHHM0cqKBs7HkDMJNxAQeUNufhMc64lmXglmTtUTZFBtUbizGX1EvHTBXAQOW2QaKs4KpMvWkUeA8qRXLie5u2mUwihbiXrNP2SqXD87aUCQ3LyHUweleEft0YnVVzjaFHIjyY2_1fNzkZqgqyiFR8sqsER9y_Oyh8MJdYArHE4DE2hvJoHA1poziH0im97X4FTT_4uSEIiDQgasy3tRANdeZGKWLHr0fOUAXu0fQu0gIx7_xH9eSkFgUHyfAaMnS0NKXEuW_zRWhp08Bkf_kslsGg84xbIb2q5wVbWsXnLYIj5E0m4MVmTpUDqR1wPwAZ18lcrkIxaCNfDNhAgse5CWtTfvlqMHkXGJghjuXdS9JuAYoiyH_vX9FWs9RIzKUOaLqWkII5BjoVi8LuSog6BYdOfXp3h9KmMCgAJUSMWfjh2Iyg0tNWj3kVoAffg4nqcOQTKyCpRu5GBscFu9vYEPH1ySIBaTZ8lWhEu1PhMKnOJLel-910D7mHfbWOi1Bj0udn7IvYrxPsp_LhZrcfF6hS9wLHPxTKiQI3Nw; ischmihpps=keb8vhhqnjiiacge57lg1hm4f3',
@@ -33,7 +35,7 @@ def get_current_value(html_content):
     #print(flowLitresPerSecond)
     return date, flowLitresPerSecond
 
-@tl.job(interval=timedelta(seconds=10))
+@tl.job(interval=timedelta(seconds=5))
 def main_job():
   #content = requests.request('GET', 'http://hydro.chmi.cz', headers=headers)
   # Lomná
@@ -51,8 +53,24 @@ def main_job():
   # print(date2)
   # print(flow1)
 
+  global limit_low_signalled, limit_high_signalled
+
+  if (flow_sum < limit_low and not limit_low_signalled):
+    send_email(date1, flow_sum)
+    limit_low_signalled = True
+    limit_high_signalled = False
+
+  if (flow_sum > limit_high and not limit_high_signalled):
+    send_email(date1, flow_sum)
+    limit_low_signalled = False
+    limit_high_signalled = True
+
   #Davide Olše + Lomňanka (součet) při poklesu pod 630 l/s pošle upozornění, že je málo vody - MVE se musí odstavit     
   #a při 650 l/s pošle, že je dost vody MVE může opět najet.
+
+def send_email(date_measurement, flow_sum):
+  print('send_email')
+  pass
 
 if __name__ == "__main__":
     tl.start(block=True)
