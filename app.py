@@ -6,17 +6,38 @@ headers = {
     'cache-control': 'no-cache',
     'Postman-Token': 'd2f267a3-8479-4a78-a2bc-ca6813909f4d'
     }
-print('headers')
+#print('headers')
 
-content = requests.request('GET', 'http://hydro.chmi.cz', headers=headers)
-print('test')
+def get_current_value(html_content):
+  soup = BeautifulSoup(html_content, 'html.parser')
 
-#with requests.Session() as s:
+  big_table = soup.find('table', class_='stdstationtbl')
+  third_table = big_table.find_all('tr', recursive=False)[2]
+  rows = third_table.find_all('tr')
 
-#  content = s.get('http://hydro.chmi.cz', headers=headers)
-#  print(content)
+  for row in rows[1:]: 
+    values = row.find_all('td')
+    date = values[0].text
+    stateCentiMeters = values[1].text
+    flowLitresPerSecond = float(values[2].text) * 1000
+    temperatureDegreeCelsius = values[3].text
+    #print(flowLitresPerSecond)
+    return date, flowLitresPerSecond
 
-print('test 2')
-soup = BeautifulSoup(content, 'html.parser')
+#content = requests.request('GET', 'http://hydro.chmi.cz', headers=headers)
+# Lomná
+content1 = requests.request('GET', 'http://hydro.chmi.cz/hpps/popup_hpps_prfdyn.php?seq=307326')
+# Olše 
+content2 = requests.request('GET', 'http://hydro.chmi.cz/hpps/popup_hpps_prfdyn.php?seq=307325')
 
-print(soup.prettify())
+(date1, flow1) = get_current_value(content1.text)
+(date2, flow2) = get_current_value(content2.text)
+flow_sum = flow1 + flow2
+
+print(date1)
+print(flow_sum)
+# print(date2)
+# print(flow1)
+
+#Davide Olše + Lomňanka (součet) při poklesu pod 630 l/s pošle upozornění, že je málo vody - MVE se musí odstavit     
+#a při 650 l/s pošle, že je dost vody MVE může opět najet.
