@@ -12,6 +12,7 @@ limit_low_signalled = False
 limit_high_signalled = False
 port = 465  # For SSL
 email = ''
+receiver = ''
 password = ''
 
 headers = {
@@ -60,19 +61,19 @@ def main_job():
   global limit_low_signalled, limit_high_signalled
 
   if (flow_sum < limit_low and not limit_low_signalled):
-    send_email(date1, flow_sum)
+    send_email(flow_sum, flow1, flow2, date1, date2)
     limit_low_signalled = True
     limit_high_signalled = False
 
   if (flow_sum > limit_high and not limit_high_signalled):
-    send_email(date1, flow_sum)
+    send_email(flow_sum, flow1, flow2, date1, date2)
     limit_low_signalled = False
     limit_high_signalled = True
 
   #Davide Olše + Lomňanka (součet) při poklesu pod 630 l/s pošle upozornění, že je málo vody - MVE se musí odstavit     
   #a při 650 l/s pošle, že je dost vody MVE může opět najet.
 
-def send_email(date_measurement, flow_sum):
+def send_email(flow_sum, flow1, flow2, date1, date2):
   print('send_email')
   # Create a secure SSL context
   context = ssl.create_default_context()
@@ -82,10 +83,22 @@ def send_email(date_measurement, flow_sum):
     sender_email = email
     receiver_email = email
     message = """\
-Subject: Hi there
+Subject: Jablunkov MVE - prutok
 
-This message is sent from Python."""
-    server.sendmail(sender_email, receiver_email, message)
+Lomna:
+Datum a cas: {0}
+Prutok [l/s]: {1}
+
+Olse:
+Datum a cas: {2}
+Prutok [l/s]: {3}
+
+------------------
+Datum a cas kontroly: {4}
+Soucet [l/s]: {5}
+""".format(date1, flow1, date2, flow2, datetime.datetime.now().strftime("%d.%m.%Y %H:%M:%S"), flow_sum)
+    print(message)
+    server.sendmail('hydronotifier@no-reply.cz', receiver_email, message)
   
 
 if __name__ == "__main__":
