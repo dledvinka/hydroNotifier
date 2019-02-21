@@ -5,7 +5,13 @@ from timeloop import Timeloop
 from datetime import timedelta
 import datetime
 import smtplib, ssl
+import logging
+#debug, info, warning, error, critical
+#default: warning and above
 
+# logging configuration
+logging.basicConfig(level=logging.DEBUG, filename='test.log', format='%(asctime)s:%(module)s:%(levelname)s:%(message)s')
+logging.debug('app.py started')
 
 limit_low = 630.0
 limit_high = 650.0
@@ -43,6 +49,7 @@ def get_current_value(html_content):
 
 @tl.job(interval=timedelta(seconds=5))
 def main_job():
+  logging.debug('Job started')
   #content = requests.request('GET', 'http://hydro.chmi.cz', headers=headers)
   # Lomná
   content1 = requests.request('GET', 'http://hydro.chmi.cz/hpps/popup_hpps_prfdyn.php?seq=307326')
@@ -53,9 +60,9 @@ def main_job():
   (date2, flow2) = get_current_value(content2.text)
   flow_sum = flow1 + flow2
 
-  print(datetime.datetime.now())
-  print(date1)
-  print(flow_sum)
+  logging.debug(datetime.datetime.now())
+  logging.debug(date1)
+  logging.debug(flow_sum)
   # print(date2)
   # print(flow1)
 
@@ -75,31 +82,31 @@ def main_job():
   #a při 650 l/s pošle, že je dost vody MVE může opět najet.
 
 def send_email(flow_sum, flow1, flow2, date1, date2):
-  print('send_email')
+  logging.debug('send_email')
   # Create a secure SSL context
-  context = ssl.create_default_context()
+#   context = ssl.create_default_context()
 
-  with smtplib.SMTP_SSL("smtp.gmail.com", port, context=context) as server:
-    server.login(email, password)
-    sender_email = email
-    receiver_email = email
-    message = """\
-Subject: Jablunkov MVE - prutok
+#   with smtplib.SMTP_SSL("smtp.gmail.com", port, context=context) as server:
+#     server.login(email, password)
+#     sender_email = email
+#     receiver_email = email
+#     message = """\
+# Subject: Jablunkov MVE - prutok
 
-Lomna:
-Datum a cas: {0}
-Prutok [l/s]: {1}
+# Lomna:
+# Datum a cas: {0}
+# Prutok [l/s]: {1}
 
-Olse:
-Datum a cas: {2}
-Prutok [l/s]: {3}
+# Olse:
+# Datum a cas: {2}
+# Prutok [l/s]: {3}
 
-------------------
-Datum a cas kontroly: {4}
-Soucet [l/s]: {5}
-""".format(date1, flow1, date2, flow2, datetime.datetime.now().strftime("%d.%m.%Y %H:%M:%S"), flow_sum)
-    print(message)
-    server.sendmail('hydronotifier@no-reply.cz', receiver_email, message)
+# ------------------
+# Datum a cas kontroly: {4}
+# Soucet [l/s]: {5}
+# """.format(date1, flow1, date2, flow2, datetime.datetime.now().strftime("%d.%m.%Y %H:%M:%S"), flow_sum)
+#     print(message)
+#     server.sendmail('hydronotifier@no-reply.cz', receiver_email, message)
   
 
 if __name__ == "__main__":
