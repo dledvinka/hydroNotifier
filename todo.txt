@@ -1,5 +1,0 @@
-try/catch
-logging to file
-external configuration for email, passwords, smtp server (env file?)
-free smtp server?
-store transient state - what was reported last time and when

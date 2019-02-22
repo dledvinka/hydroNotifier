@@ -1,0 +1,15 @@
+HydroNotifier:
+  ✔ try/catch @done (2019-2-22 11:56:40)
+  ✔ logging to file @done (2019-2-22 11:56:30)
+  ✔ external configuration for email, passwords, smtp server (env file?) @done (2019-2-22 11:56:33)
+  ✘ free smtp server? @cancelled (2019-2-22 11:56:37)
+  ☐ store transient state - what was reported last time and when @low
+  ☐ SMTPHandler timeouts @high 
+  ☐ testing
+  ☐ release on Raspberry
+
+
+
+  
+
+
