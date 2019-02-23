@@ -26,26 +26,26 @@ logging.getLogger('').addHandler(file_handler)
 # logger.addHandler(console_handler)
 
 # SMTP logging
-# load_dotenv('.env', verbose=True)
+load_dotenv('.env', verbose=True)
 
-# # Load in configuration from environment variables:
-# EMAIL_LOGIN = os.getenv('EMAIL_LOGIN')
-# EMAIL_PWD = os.getenv('EMAIL_PWD')
-# EMAIL_SERVER=os.getenv('EMAIL_SERVER')
-# EMAIL_LOGGING_PORT=os.getenv('EMAIL_LOGGING_PORT')
+# Load in configuration from environment variables:
+EMAIL_LOGIN = os.getenv('EMAIL_LOGIN')
+EMAIL_PWD = os.getenv('EMAIL_PWD')
+EMAIL_SERVER=os.getenv('EMAIL_SERVER')
+EMAIL_LOGGING_PORT=os.getenv('EMAIL_LOGGING_PORT')
 
-# smtp_handler = logging.handlers.SMTPHandler(
-#   mailhost=(EMAIL_SERVER, EMAIL_LOGGING_PORT),
-#   fromaddr='ledvinka.david@gmail.com',
-#   toaddrs=['ledvinka.david@gmail.com'],
-#   subject='HydroNotifier - Application error',
-#   credentials=(EMAIL_LOGIN, EMAIL_PWD),
-#   secure=(),
-#   timeout=30.0)
+smtp_handler = logging.handlers.SMTPHandler(
+  mailhost=(EMAIL_SERVER, EMAIL_LOGGING_PORT),
+  fromaddr='ledvinka.david@gmail.com',
+  toaddrs=['ledvinka.david@gmail.com'],
+  subject='HydroNotifier - Application error',
+  credentials=(EMAIL_LOGIN, EMAIL_PWD),
+  secure=(),
+  timeout=30.0)
 
-# smtp_handler.setLevel(logging.WARNING)
-# smtp_handler.setFormatter(formatter)
-# logging.getLogger('').addHandler(smtp_handler)
+smtp_handler.setLevel(logging.WARNING)
+smtp_handler.setFormatter(formatter)
+logging.getLogger('').addHandler(smtp_handler)
 
 logging.info('HydroNotifier started')
 # logging.error('SMTP test')
