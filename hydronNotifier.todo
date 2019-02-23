@@ -7,6 +7,10 @@ HydroNotifier:
   ☐ SMTPHandler timeouts @high 
   ☐ testing
   ☐ release on Raspberry
+  ☐ prior to release - don't forget to modify timer period to 1 hour
+
+
+
 
 
 

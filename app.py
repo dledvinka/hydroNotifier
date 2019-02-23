@@ -66,8 +66,8 @@ message_formatter = MessageFormatter()
 
 config = configparser.ConfigParser()
 config.read('config.ini')
-LEVEL_LOW = config['LEVELS']['LevelLow']
-LEVEL_HIGH = config['LEVELS']['LevelHigh']
+LEVEL_LOW = float(config['LEVELS']['LevelLow'])
+LEVEL_HIGH = float(config['LEVELS']['LevelHigh'])
 
 logging.info('LEVEL_LOW = {0}'.format(LEVEL_LOW))
 logging.info('LEVEL_HIGH = {0}'.format(LEVEL_HIGH))
@@ -94,7 +94,7 @@ def main_job():
         limit_high_signalled = False
 
     if (flow_sum > LEVEL_HIGH and not limit_high_signalled):
-      notifications_sent = send_notifications(flow_sum, flow_lomna, flow_olse, date_lomna, date_olse, LimitType.LOW)
+      notifications_sent = send_notifications(flow_sum, flow_lomna, flow_olse, date_lomna, date_olse, LimitType.HIGH)
 
       if True in notifications_sent:
         limit_low_signalled = False
@@ -110,5 +110,5 @@ def send_notifications(flow_sum, flow_lomna, flow_olse, date_lomna, date_olse, l
 
 
 if __name__ == "__main__":
-  #tl.start(block=True)
+  tl.start(block=True)
   logging.info('HydroNotifier stopped')

@@ -25,8 +25,9 @@ class DataScrapper:
     try:
       for key, url in self.data_sources.items():
         page_content = requests.request('GET', url, headers=self.headers)
-        (date, flowLitresPerSecond) = self.get_current_value(page_content)
+        (date, flowLitresPerSecond) = self.get_current_value(page_content.text)
         result[key] = (date, flowLitresPerSecond)
+        logging.info('Scrapped values for {0}: {1}, {2}'.format(key, date, flowLitresPerSecond))
     except Exception as e:
       logging.exception(e)
 
@@ -46,5 +47,4 @@ class DataScrapper:
       stateCentiMeters = values[1].text
       flowLitresPerSecond = float(values[2].text) * 1000
       temperatureDegreeCelsius = values[3].text
-      #print(flowLitresPerSecond)
       return date, flowLitresPerSecond

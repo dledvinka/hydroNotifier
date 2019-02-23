@@ -25,7 +25,15 @@ class SmsNotifier:
           'to': self.SMS_TO,
           'text': message,
       })
-      logging.info('SMS Nofitication sent, response: {response}'.format(json.dumps(send_result)))
+
+      # response example: {"message-count": "1", "messages": [{"to": "420735159055", "message-id": "140000000BB24AD0", "status": "0", "remaining-balance": "1.72820000", "message-price": "0.04530000", "network": "23001"}]}
+      remaining_balance = float(send_result['messages'][0]['remaining-balance'])
+      logging.info('Remaining balance: {0}'.format(remaining_balance))
+
+      if remaining_balance < 0.5:
+        logging.warning('Nexmo remaining balance too low!!! Remaining balance: {0}'.format(remaining_balance))
+
+      logging.info('SMS Nofitication sent, response: {0}'.format(json.dumps(send_result)))
     except Exception as e:
       logging.error(e)
       return False
