@@ -47,7 +47,7 @@ smtp_handler.setLevel(logging.WARNING)
 smtp_handler.setFormatter(formatter)
 logging.getLogger('').addHandler(smtp_handler)
 
-logging.info('HydroNotifier started')
+logging.warning('HydroNotifier started')
 # logging.error('SMTP test')
 
 from email_notifier import EmailNotifier
