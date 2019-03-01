@@ -14,7 +14,7 @@ logging.basicConfig(level=logging.DEBUG, format=LOG_FORMAT)
 
 # File logging
 file_handler = logging.handlers.RotatingFileHandler('hydroNotifier.log', mode='a', maxBytes=1000000, backupCount=10)
-file_handler.setLevel(logging.INFO)
+file_handler.setLevel(logging.DEBUG)
 file_handler.setFormatter(formatter)
 logging.getLogger('').addHandler(file_handler)
 

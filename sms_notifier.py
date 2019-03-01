@@ -26,14 +26,26 @@ class SmsNotifier:
           'text': message,
       })
 
+      logging.debug('send_result = {0}'.format(send_result))
+      logging.debug('text = {0}'.format(message))
       # response example: {"message-count": "1", "messages": [{"to": "420735159055", "message-id": "140000000BB24AD0", "status": "0", "remaining-balance": "1.72820000", "message-price": "0.04530000", "network": "23001"}]}
-      remaining_balance = float(send_result['messages'][0]['remaining-balance'])
-      logging.info('Remaining balance: {0}'.format(remaining_balance))
+      # error example: {'message-count': '1', 'messages': [{'to': '420604346762', 'status': '29', 'error-text': 'Non White-listed Destination - rejected'}]}
+      message_result = send_result['messages'][0]
+      status = message_result['status']
 
-      if remaining_balance < 0.5:
-        logging.warning('Nexmo remaining balance too low!!! Remaining balance: {0}'.format(remaining_balance))
+      if (status == '0'):
+        remaining_balance = float(message_result['remaining-balance'])
+        logging.info('Remaining balance: {0}'.format(remaining_balance))
 
-      logging.info('SMS Nofitication sent, response: {0}'.format(json.dumps(send_result)))
+        if remaining_balance < 0.5:
+          logging.warning('Nexmo remaining balance too low!!! Remaining balance: {0}'.format(remaining_balance))
+
+        logging.info('SMS Nofitication sent.')
+
+      else:
+        logging.error('Something went wrong during sending SMS: {0}'.format(send_result))
+
+      
     except Exception as e:
       logging.error(e)
       return False

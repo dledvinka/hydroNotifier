@@ -25,6 +25,7 @@ class EmailNotifier:
 
   def send_message(self, message):
     logging.info('Sending EMAIL notification')
+    logging.debug('message = {0}'.format(message))
     # Create a secure SSL context
     context = ssl.create_default_context()
     
